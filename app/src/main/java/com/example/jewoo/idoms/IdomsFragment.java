@@ -1,5 +1,6 @@
 package com.example.jewoo.idoms;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,9 +14,28 @@ import org.w3c.dom.Text;
 /**
  * Created by jewoo on 2016. 7. 2..
  */
-public class IdomsFragment extends Fragment {
-    TextView resultTextView;
-    Button button;
+public class IdomsFragment extends Fragment implements View.OnClickListener{
+    private TextView mQuestionTextView;
+    private Button mNextButton;
+    OnButtonListener mListener;
+
+    // button event listener
+    public interface OnButtonListener{
+        public void onButtonClicked();
+    }
+
+    // reference activity
+    @Override
+    public void onAttach(Activity activity){
+        super.onAttach(activity);
+        try{
+            mListener = (OnButtonListener) activity;
+        } catch(ClassCastException e){
+            throw new ClassCastException(activity.toString() + " must implement OnArticleSelectedListener");
+        }
+
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,20 +45,31 @@ public class IdomsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
         View view = inflater.inflate( R.layout.idoms_fragment, container, false );
 
-         button = (Button)view.findViewById(R.id.button);
-        resultTextView = (TextView)view.findViewById(R.id.textView);
-        //버튼 이벤트 추가
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                resultTextView.setText("dfdfee134");
-            }
-        });
+        mNextButton = (Button)view.findViewById(R.id.button);
+        mQuestionTextView = (TextView)view.findViewById(R.id.textView);
+        // button click listener
+        mNextButton.setOnClickListener(this);
+
         return view;
     }
-    public void setText(String text){
-        TextView textView = (TextView) getView().findViewById(R.id.textView);
-        textView.setText(text);
+    public void setQuestionText(String text){
+        mQuestionTextView.setText(text);
+    }
+    public void setNextQuestion()
+    {
+
     }
 
+    @Override
+    public void onClick(View view)
+    {
+        switch(view.getId()) {
+
+            case R.id.button:
+                mListener.onButtonClicked(); // call back
+                break;
+            default:
+                break;
+        }
+    }
 }

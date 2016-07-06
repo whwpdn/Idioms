@@ -27,7 +27,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements IdomsFragment.OnButtonListener {
 
     private static final String TAG_ID="id";
     private static final String TAG_NAME="name";
@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
             InputStream is = assetManager.open("databases/StudyDatabase.db",AssetManager.ACCESS_BUFFER);
             long fileSize = is.available();
             long test = outfile.length();
-            if(fileSize > test) {
+            //if(fileSize > test) {
                 byte[] tempData = new byte[(int) fileSize];
                 is.read(tempData);
                 is.close();
@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
                 FileOutputStream fo = new FileOutputStream(outfile);
                 fo.write(tempData);
                 fo.close();
-            }
+            //}
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -96,9 +96,6 @@ public class MainActivity extends AppCompatActivity {
 
         mCurrentId = getQuestion(mCurrentId);
         ///
-
-
-
 
     }
     private int getQuestion(int _id){
@@ -119,8 +116,9 @@ public class MainActivity extends AppCompatActivity {
     private void setData(String strQuestion)
     {
         //mQuestionTextView.setText(strQuestion);
-     //  FragmentManager fmManager = getFragmentManager();
-      //  IdomsFragment fmIdoms=(IdomsFragment)fmManager.findFragmentById(R.layout.fragment_idoms);
+       FragmentManager fmManager = getFragmentManager();
+        IdomsFragment fmIdoms=(IdomsFragment)fmManager.findFragmentById(R.id.fragment);
+        fmIdoms.setQuestionText(strQuestion);
 
     }
 
@@ -145,5 +143,11 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    // IdomsFragment interface 구현
+    public void onButtonClicked(){
+        mCurrentId = getQuestion(mCurrentId);
+    }
+
 
 }
