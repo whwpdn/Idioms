@@ -29,18 +29,17 @@ import android.app.FragmentTransaction;
 
 public class MainActivity extends AppCompatActivity implements IdomsFragment.OnButtonListener {
 
-    private static final String TAG_ID="id";
-    private static final String TAG_NAME="name";
-
+    // sqlite database member
     private IdomsSqliteOpenHelper mDBHelper;
     private String mDBName = "StudyDatabase.db";
-    int miDBVersion =1; // database version
     private SQLiteDatabase mDB;
+    int miDBVersion =1; // database version
     private static final String TAG_DB = "SQLITE";
-    public static TextView mQuestionTextView =null;
+
+    //question member
     private int mCurrentId=1;
     private String mCorrectAnswer="";
-
+    private boolean mIsShowAns = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,8 +117,21 @@ public class MainActivity extends AppCompatActivity implements IdomsFragment.OnB
         //mQuestionTextView.setText(strQuestion);
        FragmentManager fmManager = getFragmentManager();
         IdomsFragment fmIdoms=(IdomsFragment)fmManager.findFragmentById(R.id.fragment);
-        fmIdoms.setQuestionText(strQuestion);
 
+        fmIdoms.setQuestionText(strQuestion);
+        fmIdoms.setAnswerText("");
+
+        mIsShowAns = false;
+    }
+
+    private void showCorrectAnswer()
+    {
+        if(mIsShowAns) return;
+
+        FragmentManager fmManager = getFragmentManager();
+        IdomsFragment fmIdoms=(IdomsFragment)fmManager.findFragmentById(R.id.fragment);
+        fmIdoms.setAnswerText(mCorrectAnswer);
+        mIsShowAns = true;
     }
 
     @Override
@@ -145,9 +157,10 @@ public class MainActivity extends AppCompatActivity implements IdomsFragment.OnB
     }
 
     // IdomsFragment interface 구현
-    public void onButtonClicked(){
+    public void onBtnNextClicked(){
         mCurrentId = getQuestion(mCurrentId);
     }
+    public void onBtnCheckAnswerClicked(){ showCorrectAnswer();}
 
 
 }

@@ -16,12 +16,14 @@ import org.w3c.dom.Text;
  */
 public class IdomsFragment extends Fragment implements View.OnClickListener{
     private TextView mQuestionTextView;
-    private Button mNextButton;
+    private TextView mAnswerTextView;
+   // private Button mNextButton;
     OnButtonListener mListener;
 
     // button event listener
     public interface OnButtonListener{
-        public void onButtonClicked();
+        public void onBtnNextClicked();
+        public void onBtnCheckAnswerClicked();
     }
 
     // reference activity
@@ -45,16 +47,21 @@ public class IdomsFragment extends Fragment implements View.OnClickListener{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
         View view = inflater.inflate( R.layout.idoms_fragment, container, false );
 
-        mNextButton = (Button)view.findViewById(R.id.button);
+        Button btnNext = (Button)view.findViewById(R.id.btnNext);
+        Button btnAnswer = (Button)view.findViewById(R.id.btnCheckAnswer);
         mQuestionTextView = (TextView)view.findViewById(R.id.textView);
+        mAnswerTextView = (TextView)view.findViewById(R.id.textView2);
         // button click listener
-        mNextButton.setOnClickListener(this);
+        btnNext.setOnClickListener(this);
+        btnAnswer.setOnClickListener(this);
 
         return view;
     }
     public void setQuestionText(String text){
         mQuestionTextView.setText(text);
     }
+    public void setAnswerText(String text) { mAnswerTextView.setText(text);}
+
     public void setNextQuestion()
     {
 
@@ -65,8 +72,11 @@ public class IdomsFragment extends Fragment implements View.OnClickListener{
     {
         switch(view.getId()) {
 
-            case R.id.button:
-                mListener.onButtonClicked(); // call back
+            case R.id.btnNext:
+                mListener.onBtnNextClicked(); // call back
+                break;
+            case R.id.btnCheckAnswer:
+                mListener.onBtnCheckAnswerClicked();
                 break;
             default:
                 break;
