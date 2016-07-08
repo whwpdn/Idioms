@@ -23,13 +23,14 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 
 
-public class MainActivity extends AppCompatActivity implements IdomsFragment.OnButtonListener {
+public class MainActivity extends AppCompatActivity implements IdomsFragment.OnListener {
 
     // sqlite database member
     private IdomsSqliteOpenHelper mDBHelper;
@@ -41,7 +42,12 @@ public class MainActivity extends AppCompatActivity implements IdomsFragment.OnB
     //question member
     private int mCurrentId=1;
     private String mCorrectAnswer="";
-    private boolean mIsShowAns = false;
+    private boolean mIsShowAns = true;
+
+    // Selected Day
+    private ArrayList<IdomsData> mListIdoms;
+    private boolean mSelectedMode = false;
+    private int mSelectedId =0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements IdomsFragment.OnB
 //        });
 
 
+        mListIdoms = new ArrayList<IdomsData>();
         // set sqlite ..
         mDBHelper = new IdomsSqliteOpenHelper(
                 this,mDBName,null // cursorFactory null : standart cursor
@@ -97,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements IdomsFragment.OnB
         }
 
         // set first question - randomly one in total
-        mCurrentId = getQuestion(mCurrentId);
+        //mCurrentId = getQuestion(mCurrentId);
 
 
         // set spinner - 1 to 20
@@ -112,42 +119,7 @@ public class MainActivity extends AppCompatActivity implements IdomsFragment.OnB
         ///
 
     }
-    private int getQuestion(int _id){
-        Cursor cursor = mDB.rawQuery("select english, meaning from idoms where _id="+_id+";",null);
-        //Cursor cursor = mDB.rawQuery("select * from idoms;",null);
-        //while(cursor.moveToNext())
-        //{
-        //    String sss = cursor.getString(1);
-        //    int iadf = cursor.getInt(0);
-        //}
-        _id++;
-        while(cursor.moveToNext()){
-            setData(cursor.getString(1));
-            mCorrectAnswer = cursor.getString(0);
-        }
-        return _id;
-    }
-    private void setData(String strQuestion)
-    {
-        //mQuestionTextView.setText(strQuestion);
-       FragmentManager fmManager = getFragmentManager();
-        IdomsFragment fmIdoms=(IdomsFragment)fmManager.findFragmentById(R.id.fragment);
 
-        fmIdoms.setQuestionText(strQuestion);
-        fmIdoms.setAnswerText("");
-
-        mIsShowAns = false;
-    }
-
-    private void showCorrectAnswer()
-    {
-        if(mIsShowAns) return;
-
-        FragmentManager fmManager = getFragmentManager();
-        IdomsFragment fmIdoms=(IdomsFragment)fmManager.findFragmentById(R.id.fragment);
-        fmIdoms.setAnswerText(mCorrectAnswer);
-        mIsShowAns = true;
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -171,11 +143,102 @@ public class MainActivity extends AppCompatActivity implements IdomsFragment.OnB
         return super.onOptionsItemSelected(item);
     }
 
+
+    private int getQuestion(int _id){
+        Cursor cursor = mDB.rawQuery("select english, meaning from idoms where _id="+_id+";",null);
+        _id++;
+        while(cursor.moveToNext()){
+            setData(cursor.getString(1));
+            mCorrectAnswer = cursor.getString(0);
+        }
+        return _id;
+    }
+
+    private void setData(String strQuestion)
+    {
+        //mQuestionTextView.setText(strQuestion);
+       FragmentManager fmManager = getFragmentManager();
+        IdomsFragment fmIdoms=(IdomsFragment)fmManager.findFragmentById(R.id.fragment);
+
+        fmIdoms.setQuestionText(strQuestion);
+        if(mIsShowAns) {
+            fmIdoms.setAnswerText("");
+            mIsShowAns = false;
+        }
+
+    }
+
+    private void showCorrectAnswer()
+    {
+        if(mIsShowAns) return;
+
+        FragmentManager fmManager = getFragmentManager();
+        IdomsFragment fmIdoms=(IdomsFragment)fmManager.findFragmentById(R.id.fragment);
+        fmIdoms.setAnswerText(mCorrectAnswer);
+        mIsShowAns = true;
+    }
+
+    // when lesson selected, add Idoms.
+    private void setSelectedDayIdoms(int days[]){
+        mListIdoms.clear();
+        mSelectedMode = true;
+        mSelectedId = 0;
+
+        for(int i=0; i<days.length ; i++){
+
+            Cursor cursor = mDB.rawQuery("select _id, meaning, english from idoms where lesson="+days[i]+";",null);
+
+            while(cursor.moveToNext()){
+                IdomsData idoms = new IdomsData(cursor.getInt(0),cursor.getString(1),cursor.getString(2));
+                mListIdoms.add(idoms);
+            }
+        }
+
+        setData(mListIdoms.get(mSelectedId).getmQuestion());
+        mCorrectAnswer = mListIdoms.get(mSelectedId).getmAnswer();
+        mSelectedId++;
+    }
+
+    private int setSelectedDayNextQuestion(int idx){
+        setData(mListIdoms.get(idx).getmQuestion());
+        mCorrectAnswer = mListIdoms.get(idx).getmAnswer();
+        idx = (++idx)%3;
+        return idx;
+    }
+
     // IdomsFragment interface 구현
     public void onBtnNextClicked(){
-        mCurrentId = getQuestion(mCurrentId);
+        if(mSelectedMode)
+            mSelectedId = setSelectedDayNextQuestion(mSelectedId);
+        else
+            mCurrentId = getQuestion(mCurrentId);
     }
-    public void onBtnCheckAnswerClicked(){ showCorrectAnswer();}
 
+    public void onBtnCheckAnswerClicked(){
+        showCorrectAnswer();
+    }
+    // pos - spinner item pos, id - spinner item id
+    public void onItemSelected(int pos, long id){
+
+        if(pos==0)
+        {
+            reset();
+
+            mCurrentId = getQuestion(mCurrentId);
+            //return;
+        }
+        else {
+            int[] days = {pos};
+            setSelectedDayIdoms(days);
+        }
+
+    }
+
+    private void reset()
+    {
+        mSelectedMode = false;
+        mSelectedId = 0;
+        mListIdoms.clear();
+    }
 
 }
