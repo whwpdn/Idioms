@@ -15,6 +15,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.io.File;
@@ -48,17 +50,17 @@ public class MainActivity extends AppCompatActivity implements IdomsFragment.OnB
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//            }
+//        });
 
 
-        // sqlite ..
+        // set sqlite ..
         mDBHelper = new IdomsSqliteOpenHelper(
                 this,mDBName,null // cursorFactory null : standart cursor
                 , miDBVersion) ;
@@ -72,7 +74,8 @@ public class MainActivity extends AppCompatActivity implements IdomsFragment.OnB
             Log.e(TAG_DB, " can't get database");
             finish();
         }
-        //select();
+
+        //copy db file
         try {
             File outfile = new File("/data/data/com.example.jewoo.idoms/databases/"+mDBName);
             AssetManager assetManager = getResources().getAssets();
@@ -93,7 +96,19 @@ public class MainActivity extends AppCompatActivity implements IdomsFragment.OnB
             e.printStackTrace();
         }
 
+        // set first question - randomly one in total
         mCurrentId = getQuestion(mCurrentId);
+
+
+        // set spinner - 1 to 20
+        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.day, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        spinner.setAdapter(adapter);
         ///
 
     }
