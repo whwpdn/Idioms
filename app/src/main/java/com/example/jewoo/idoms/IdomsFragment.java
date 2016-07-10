@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -23,19 +24,14 @@ public class IdomsFragment extends Fragment implements View.OnClickListener , Ad
    // private Button mNextButton;
     OnListener mListener;
 
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        mListener.onItemSelected(position, id);
-    }
+    private boolean mIsShow = true;
 
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
 
-    }
 
     // button event listener
     public interface OnListener{
         public void onBtnNextClicked();
+        public void onBtnPreClicked();
         public void onBtnCheckAnswerClicked();
         public void onItemSelected(int position, long id);
     }
@@ -63,17 +59,27 @@ public class IdomsFragment extends Fragment implements View.OnClickListener , Ad
 
         Button btnNext = (Button)view.findViewById(R.id.btnNext);
         Button btnAnswer = (Button)view.findViewById(R.id.btnCheckAnswer);
+        Button btnPre = (Button)view.findViewById(R.id.btnPre);
         mQuestionTextView = (TextView)view.findViewById(R.id.textView);
         mAnswerTextView = (TextView)view.findViewById(R.id.textView2);
 
         Spinner spinner = (Spinner) view.findViewById(R.id.spinner);
-        spinner.setOnItemSelectedListener(this);
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(), R.array.day, android.R.layout.simple_spinner_item);
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
 
         // button click listener
         btnNext.setOnClickListener(this);
         btnAnswer.setOnClickListener(this);
+        btnPre.setOnClickListener(this);
+
+
+        spinner.setOnItemSelectedListener(this);
         mView=view;
         return view;
+
     }
 
     public void setQuestionText(String text){
@@ -81,9 +87,7 @@ public class IdomsFragment extends Fragment implements View.OnClickListener , Ad
         mQuestionTextView.setText(text);
     }
     public void setAnswerText(String text) {
-        ((TextView)mView.findViewById(R.id.textView2)).setText(text);
-        //mAnswerTextView.setText(text);
-
+        mAnswerTextView.setText(text);
     }
 
 
@@ -93,13 +97,44 @@ public class IdomsFragment extends Fragment implements View.OnClickListener , Ad
         switch(view.getId()) {
 
             case R.id.btnNext:
+            {
+                setAnswerBlank();
                 mListener.onBtnNextClicked(); // call back
+            }
+                break;
+            case R.id.btnPre:
+            {
+                setAnswerBlank();
+                mListener.onBtnPreClicked();
+            }
                 break;
             case R.id.btnCheckAnswer:
+            {
+                if (mIsShow) break;
+                mIsShow = true;
                 mListener.onBtnCheckAnswerClicked();
+            }
                 break;
+
             default:
                 break;
         }
+    }
+
+    private void setAnswerBlank(){
+        mIsShow = false;
+        mAnswerTextView.setText(" ");
+    }
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+        setAnswerBlank();
+        mListener.onItemSelected(position, id);
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 }

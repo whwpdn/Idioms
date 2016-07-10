@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements IdomsFragment.OnL
     //question member
     private int mCurrentId=1;
     private String mCorrectAnswer="";
-    private boolean mIsShowAns = true;
+    private int mQuestionTotalCnt =0;
 
     // Selected Day
     private ArrayList<IdomsData> mListIdoms;
@@ -105,18 +105,8 @@ public class MainActivity extends AppCompatActivity implements IdomsFragment.OnL
 
         // set first question - randomly one in total
         //mCurrentId = getQuestion(mCurrentId);
+        mQuestionTotalCnt = getTotalCnt();
 
-
-        // set spinner - 1 to 20
-        Spinner spinner = (Spinner) findViewById(R.id.spinner);
-
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.day, android.R.layout.simple_spinner_item);
-        // Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
-        spinner.setAdapter(adapter);
-        ///
 
     }
 
@@ -146,12 +136,20 @@ public class MainActivity extends AppCompatActivity implements IdomsFragment.OnL
 
     private int getQuestion(int _id){
         Cursor cursor = mDB.rawQuery("select english, meaning from idoms where _id="+_id+";",null);
-        _id++;
         while(cursor.moveToNext()){
             setData(cursor.getString(1));
             mCorrectAnswer = cursor.getString(0);
         }
         return _id;
+    }
+
+    private int getTotalCnt(){
+        Cursor cursor = mDB.rawQuery("SELECT count(_id) FROM idoms;",null);
+        int total =0;
+        while( cursor.moveToNext()){
+            total = cursor.getInt(0);
+        }
+         return total;
     }
 
     private void setData(String strQuestion)
@@ -161,21 +159,14 @@ public class MainActivity extends AppCompatActivity implements IdomsFragment.OnL
         IdomsFragment fmIdoms=(IdomsFragment)fmManager.findFragmentById(R.id.fragment);
 
         fmIdoms.setQuestionText(strQuestion);
-        if(mIsShowAns) {
-            fmIdoms.setAnswerText("");
-            mIsShowAns = false;
-        }
 
     }
 
     private void showCorrectAnswer()
     {
-        if(mIsShowAns) return;
-
         FragmentManager fmManager = getFragmentManager();
         IdomsFragment fmIdoms=(IdomsFragment)fmManager.findFragmentById(R.id.fragment);
         fmIdoms.setAnswerText(mCorrectAnswer);
-        mIsShowAns = true;
     }
 
     // when lesson selected, add Idoms.
@@ -196,22 +187,47 @@ public class MainActivity extends AppCompatActivity implements IdomsFragment.OnL
 
         setData(mListIdoms.get(mSelectedId).getmQuestion());
         mCorrectAnswer = mListIdoms.get(mSelectedId).getmAnswer();
-        mSelectedId++;
     }
 
-    private int setSelectedDayNextQuestion(int idx){
+    private int setSelectedDayQuestion(int idx){
         setData(mListIdoms.get(idx).getmQuestion());
         mCorrectAnswer = mListIdoms.get(idx).getmAnswer();
-        idx = (++idx)%3;
         return idx;
     }
 
     // IdomsFragment interface 구현
-    public void onBtnNextClicked(){
-        if(mSelectedMode)
-            mSelectedId = setSelectedDayNextQuestion(mSelectedId);
-        else
-            mCurrentId = getQuestion(mCurrentId);
+    public void onBtnNextClicked() {
+        if (mSelectedMode) {
+            if(mSelectedId == 2)
+                 mSelectedId = setSelectedDayQuestion(0);
+            else
+                mSelectedId = setSelectedDayQuestion(mSelectedId+1);
+            Log.i("next", "id = "+mSelectedId);
+          }
+        else {
+
+            if(mCurrentId ==mQuestionTotalCnt)
+                mCurrentId = getQuestion(1); // when this question is Last , go to First
+            else
+                mCurrentId = getQuestion(mCurrentId+1);
+        }
+    }
+    public void onBtnPreClicked(){
+        if(mSelectedMode) {
+            if(mSelectedId ==0)
+                mSelectedId = setSelectedDayQuestion(2);
+            else
+                mSelectedId = setSelectedDayQuestion(mSelectedId-1);
+            Log.i("pre", "id = "+mSelectedId);
+        }
+        else {
+            if(mCurrentId ==1)
+                mCurrentId = getQuestion(mQuestionTotalCnt); //  when this question is First , go to Last
+            else
+                mCurrentId = getQuestion(mCurrentId-1);
+
+
+        }
     }
 
     public void onBtnCheckAnswerClicked(){
@@ -223,7 +239,6 @@ public class MainActivity extends AppCompatActivity implements IdomsFragment.OnL
         if(pos==0)
         {
             reset();
-
             mCurrentId = getQuestion(mCurrentId);
             //return;
         }
