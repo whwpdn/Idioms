@@ -1,4 +1,4 @@
-package com.example.jewoo.idoms;
+package com.example.jewoo.idioms;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

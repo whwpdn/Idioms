@@ -1,14 +1,14 @@
-package com.example.jewoo.idoms;
+package com.example.jewoo.idioms;
 
 /**
  * Created by jewoo on 2016. 7. 8..
  */
-public class IdomsData {
+public class IdiomsData {
     private int mId;
     private String mQuestion;
     private String mAnswer;
 
-    public IdomsData(int mId, String mQuestion, String mAnswer) {
+    public IdiomsData(int mId, String mQuestion, String mAnswer) {
         this.mId = mId;
         this.mQuestion = mQuestion;
         this.mAnswer = mAnswer;

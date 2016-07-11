@@ -1,4 +1,4 @@
-package com.example.jewoo.idoms;
+package com.example.jewoo.idioms;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -12,12 +12,10 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
 /**
  * Created by jewoo on 2016. 7. 2..
  */
-public class IdomsFragment extends Fragment implements View.OnClickListener , AdapterView.OnItemSelectedListener {
+public class IdiomsFragment extends Fragment implements View.OnClickListener , AdapterView.OnItemSelectedListener {
     private View mView;
     private TextView mQuestionTextView;
     private TextView mAnswerTextView;
@@ -55,7 +53,7 @@ public class IdomsFragment extends Fragment implements View.OnClickListener , Ad
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
-        View view = inflater.inflate( R.layout.idoms_fragment, container, false );
+        View view = inflater.inflate( R.layout.idioms_fragment, container, false );
 
         Button btnNext = (Button)view.findViewById(R.id.btnNext);
         Button btnAnswer = (Button)view.findViewById(R.id.btnCheckAnswer);

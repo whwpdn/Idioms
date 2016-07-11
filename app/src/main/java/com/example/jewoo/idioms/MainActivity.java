@@ -1,11 +1,8 @@
-package com.example.jewoo.idoms;
+package com.example.jewoo.idioms;
 
-import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -14,26 +11,15 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
-import android.widget.TextView;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 
-import android.app.Fragment;
 import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 
 
-public class MainActivity extends AppCompatActivity implements IdomsFragment.OnListener {
+public class MainActivity extends AppCompatActivity implements IdiomsFragment.OnListener {
 
     // sqlite database member
-    private IdomsSqliteOpenHelper mDBHelper;
+    private IdiomsSqliteOpenHelper mDBHelper;
     private String mDBName = "StudyDatabase.db";
     private SQLiteDatabase mDB;
     int miDBVersion =1; // database version
@@ -45,7 +31,7 @@ public class MainActivity extends AppCompatActivity implements IdomsFragment.OnL
     private int mQuestionTotalCnt =0;
 
     // Selected Day
-    private ArrayList<IdomsData> mListIdoms;
+    private ArrayList<IdiomsData> mListIdoms;
     private boolean mSelectedMode = false;
     private int mSelectedId =0;
 
@@ -66,9 +52,9 @@ public class MainActivity extends AppCompatActivity implements IdomsFragment.OnL
 //        });
 
 
-        mListIdoms = new ArrayList<IdomsData>();
+        mListIdoms = new ArrayList<IdiomsData>();
         // set sqlite ..
-        mDBHelper = new IdomsSqliteOpenHelper(
+        mDBHelper = new IdiomsSqliteOpenHelper(
                 this,mDBName,null // cursorFactory null : standart cursor
                 , miDBVersion) ;
 
@@ -84,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements IdomsFragment.OnL
 //
 //        //copy db file
 //        try {
-//            File outfile = new File("/data/data/com.example.jewoo.idoms/databases/"+mDBName);
+//            File outfile = new File("/data/data/com.example.jewoo.idioms/databases/"+mDBName);
 //            AssetManager assetManager = getResources().getAssets();
 //            InputStream is = assetManager.open("databases/StudyDatabase.db",AssetManager.ACCESS_BUFFER);
 //            long fileSize = is.available();
@@ -135,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements IdomsFragment.OnL
 
 
     private int getQuestion(int _id){
-        Cursor cursor = mDB.rawQuery("select english, meaning from idoms where _id="+_id+";",null);
+        Cursor cursor = mDB.rawQuery("select english, meaning from idioms where _id="+_id+";",null);
         while(cursor.moveToNext()){
             setData(cursor.getString(1));
             mCorrectAnswer = cursor.getString(0);
@@ -144,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements IdomsFragment.OnL
     }
 
     private int getTotalCnt(){
-        Cursor cursor = mDB.rawQuery("SELECT count(_id) FROM idoms;",null);
+        Cursor cursor = mDB.rawQuery("SELECT count(_id) FROM idioms;",null);
         int total =0;
         while( cursor.moveToNext()){
             total = cursor.getInt(0);
@@ -156,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements IdomsFragment.OnL
     {
         //mQuestionTextView.setText(strQuestion);
        FragmentManager fmManager = getFragmentManager();
-        IdomsFragment fmIdoms=(IdomsFragment)fmManager.findFragmentById(R.id.fragment);
+        IdiomsFragment fmIdoms=(IdiomsFragment)fmManager.findFragmentById(R.id.fragment);
 
         fmIdoms.setQuestionText(strQuestion);
 
@@ -165,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements IdomsFragment.OnL
     private void showCorrectAnswer()
     {
         FragmentManager fmManager = getFragmentManager();
-        IdomsFragment fmIdoms=(IdomsFragment)fmManager.findFragmentById(R.id.fragment);
+        IdiomsFragment fmIdoms=(IdiomsFragment)fmManager.findFragmentById(R.id.fragment);
         fmIdoms.setAnswerText(mCorrectAnswer);
     }
 
@@ -177,10 +163,10 @@ public class MainActivity extends AppCompatActivity implements IdomsFragment.OnL
 
         for(int i=0; i<days.length ; i++){
 
-            Cursor cursor = mDB.rawQuery("select _id, meaning, english from idoms where lesson="+days[i]+";",null);
+            Cursor cursor = mDB.rawQuery("select _id, meaning, english from idioms where lesson="+days[i]+";",null);
 
             while(cursor.moveToNext()){
-                IdomsData idoms = new IdomsData(cursor.getInt(0),cursor.getString(1),cursor.getString(2));
+                IdiomsData idoms = new IdiomsData(cursor.getInt(0),cursor.getString(1),cursor.getString(2));
                 mListIdoms.add(idoms);
             }
         }
@@ -195,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements IdomsFragment.OnL
         return idx;
     }
 
-    // IdomsFragment interface 구현
+    // IdiomsFragment interface 구현
     public void onBtnNextClicked() {
         if (mSelectedMode) {
             if(mSelectedId == 2)

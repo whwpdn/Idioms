@@ -1,4 +1,4 @@
-package com.example.jewoo.idoms;
+package com.example.jewoo.idioms;
 
 import android.content.Context;
 import android.content.res.AssetManager;
@@ -13,12 +13,12 @@ import java.io.InputStream;
 /**
  * Created by jewoo on 2016. 6. 6..
  */
-public class IdomsSqliteOpenHelper extends SQLiteOpenHelper {
+public class IdiomsSqliteOpenHelper extends SQLiteOpenHelper {
 
-    private static final String DB_TABLENAME="idoms";
+    private static final String DB_TABLENAME="idioms";
     private static final String DB_NAME = "StudyDatabase.db";
-    private static final String PACKAGE_DIR = "/data/data/com.example.jewoo.idoms/databases/";
-    public IdomsSqliteOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
+    private static final String PACKAGE_DIR = "/data/data/com.example.jewoo.idioms/databases/";
+    public IdiomsSqliteOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
         initialize(context);
     }

@@ -9,14 +9,14 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.example.jewoo.idoms.MainActivity"
+    tools:context="com.example.jewoo.idioms.MainActivity"
     tools:showIn="@layout/activity_main">
 
     <fragment
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:name="com.example.jewoo.idoms.IdomsFragment"
+        android:name="com.example.jewoo.idioms.IdiomsFragment"
         android:id="@+id/fragment"
         android:layout_centerVertical="true"
-        tools:layout="@layout/idoms_fragment" />
+        tools:layout="@layout/idioms_fragment" />
 </RelativeLayout>
