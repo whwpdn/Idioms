@@ -81,27 +81,27 @@ public class MainActivity extends AppCompatActivity implements IdomsFragment.OnL
             Log.e(TAG_DB, " can't get database");
             finish();
         }
-
-        //copy db file
-        try {
-            File outfile = new File("/data/data/com.example.jewoo.idoms/databases/"+mDBName);
-            AssetManager assetManager = getResources().getAssets();
-            InputStream is = assetManager.open("databases/StudyDatabase.db",AssetManager.ACCESS_BUFFER);
-            long fileSize = is.available();
-            long test = outfile.length();
-            //if(fileSize > test) {
-                byte[] tempData = new byte[(int) fileSize];
-                is.read(tempData);
-                is.close();
-                outfile.createNewFile();
-                FileOutputStream fo = new FileOutputStream(outfile);
-                fo.write(tempData);
-                fo.close();
-            //}
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+//
+//        //copy db file
+//        try {
+//            File outfile = new File("/data/data/com.example.jewoo.idoms/databases/"+mDBName);
+//            AssetManager assetManager = getResources().getAssets();
+//            InputStream is = assetManager.open("databases/StudyDatabase.db",AssetManager.ACCESS_BUFFER);
+//            long fileSize = is.available();
+//            long test = outfile.length();
+//            //if(fileSize > test) {
+//                byte[] tempData = new byte[(int) fileSize];
+//                is.read(tempData);
+//                is.close();
+//                outfile.createNewFile();
+//                FileOutputStream fo = new FileOutputStream(outfile);
+//                fo.write(tempData);
+//                fo.close();
+//            //}
+//        }
+//        catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
         // set first question - randomly one in total
         //mCurrentId = getQuestion(mCurrentId);
