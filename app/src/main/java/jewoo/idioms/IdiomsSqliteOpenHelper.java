@@ -1,4 +1,4 @@
-package com.example.jewoo.idioms;
+package jewoo.idioms;
 
 import android.content.Context;
 import android.content.res.AssetManager;
@@ -17,7 +17,7 @@ public class IdiomsSqliteOpenHelper extends SQLiteOpenHelper {
 
     private static final String DB_TABLENAME="idioms";
     private static final String DB_NAME = "StudyDatabase.db";
-    private static final String PACKAGE_DIR = "/data/data/com.example.jewoo.idioms/databases/";
+    private static final String PACKAGE_DIR = "/data/data/jewoo.idioms/databases/";
     public IdiomsSqliteOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
         initialize(context);

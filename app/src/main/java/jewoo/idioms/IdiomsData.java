@@ -1,4 +1,4 @@
-package com.example.jewoo.idioms;
+package jewoo.idioms;
 
 /**
  * Created by jewoo on 2016. 7. 8..

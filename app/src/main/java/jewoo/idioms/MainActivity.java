@@ -1,4 +1,4 @@
-package com.example.jewoo.idioms;
+package jewoo.idioms;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;

@@ -1,4 +1,4 @@
-package com.example.jewoo.idioms;
+package jewoo.idioms;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -58,8 +58,8 @@ public class IdiomsFragment extends Fragment implements View.OnClickListener , A
         Button btnNext = (Button)view.findViewById(R.id.btnNext);
         Button btnAnswer = (Button)view.findViewById(R.id.btnCheckAnswer);
         Button btnPre = (Button)view.findViewById(R.id.btnPre);
-        mQuestionTextView = (TextView)view.findViewById(R.id.textView);
-        mAnswerTextView = (TextView)view.findViewById(R.id.textView2);
+        mQuestionTextView = (TextView)view.findViewById(R.id.tvQuestion);
+        mAnswerTextView = (TextView)view.findViewById(R.id.tvAnswer);
 
         Spinner spinner = (Spinner) view.findViewById(R.id.spinner);
 

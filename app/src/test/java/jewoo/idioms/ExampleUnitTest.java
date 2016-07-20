@@ -1,4 +1,4 @@
-package com.example.jewoo.idioms;
+package jewoo.idioms;
 
 import org.junit.Test;
 
