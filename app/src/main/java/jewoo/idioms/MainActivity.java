@@ -35,6 +35,9 @@ public class MainActivity extends AppCompatActivity implements IdiomsFragment.On
     private boolean mSelectedMode = false;
     private int mSelectedId =0;
 
+    // level
+    private int mCurrentLevelId =1; // default 1
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -121,16 +124,22 @@ public class MainActivity extends AppCompatActivity implements IdiomsFragment.On
 
 
     private int getQuestion(int _id){
-        Cursor cursor = mDB.rawQuery("select english, meaning from idioms where _id="+_id+";",null);
+        //Cursor cursor = mDB.rawQuery("select english, meaning from idioms where _id="+_id+" and level = "+mCurrentLevelId+";",null);
+        // tt : total table, pt : part table
+        Cursor cursor = mDB.rawQuery("select tt.meaning,tt.english "+
+                                    "from idioms tt, (select a._id, count(*) idx from idioms a, idioms b "+
+                                                    "where a._id >=b._id and b.level = "+mCurrentLevelId+
+                                                    " group by a._id ) pt " +
+                                    "where tt._id= pt._id and pt.idx ="+_id+";",null);
         while(cursor.moveToNext()){
-            setData(cursor.getString(1));
-            mCorrectAnswer = cursor.getString(0);
+            setData(cursor.getString(0));
+            mCorrectAnswer = cursor.getString(1);
         }
         return _id;
     }
 
     private int getTotalCnt(){
-        Cursor cursor = mDB.rawQuery("SELECT count(_id) FROM idioms;",null);
+        Cursor cursor = mDB.rawQuery("SELECT count(_id) FROM idioms where level ="+mCurrentLevelId+" ;",null);
         int total =0;
         while( cursor.moveToNext()){
             total = cursor.getInt(0);
@@ -163,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements IdiomsFragment.On
 
         for(int i=0; i<days.length ; i++){
 
-            Cursor cursor = mDB.rawQuery("select _id, meaning, english from idioms where lesson="+days[i]+";",null);
+            Cursor cursor = mDB.rawQuery("select _id, meaning, english from idioms where lesson="+days[i]+" and level = "+mCurrentLevelId+";",null);
 
             while(cursor.moveToNext()){
                 IdiomsData idoms = new IdiomsData(cursor.getInt(0),cursor.getString(1),cursor.getString(2));
@@ -188,7 +197,6 @@ public class MainActivity extends AppCompatActivity implements IdiomsFragment.On
                  mSelectedId = setSelectedDayQuestion(0);
             else
                 mSelectedId = setSelectedDayQuestion(mSelectedId+1);
-            Log.i("next", "id = "+mSelectedId);
           }
         else {
 
@@ -204,7 +212,6 @@ public class MainActivity extends AppCompatActivity implements IdiomsFragment.On
                 mSelectedId = setSelectedDayQuestion(2);
             else
                 mSelectedId = setSelectedDayQuestion(mSelectedId-1);
-            Log.i("pre", "id = "+mSelectedId);
         }
         else {
             if(mCurrentId ==1)
@@ -233,6 +240,14 @@ public class MainActivity extends AppCompatActivity implements IdiomsFragment.On
             setSelectedDayIdoms(days);
         }
 
+    }
+
+    @Override
+    public void onRdBtnChanged(int checkedId) {
+        mCurrentLevelId = checkedId;
+        mQuestionTotalCnt=getTotalCnt();
+        //mCurrentId=0;
+        mCurrentId=getQuestion(1);
     }
 
     private void reset()

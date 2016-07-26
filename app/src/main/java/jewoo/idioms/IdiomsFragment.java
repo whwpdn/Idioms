@@ -3,12 +3,16 @@ package jewoo.idioms;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -19,6 +23,8 @@ public class IdiomsFragment extends Fragment implements View.OnClickListener , A
     private View mView;
     private TextView mQuestionTextView;
     private TextView mAnswerTextView;
+    private RadioGroup rdGroup;
+    private Spinner mSpinnerDays;
    // private Button mNextButton;
     OnListener mListener;
 
@@ -32,6 +38,7 @@ public class IdiomsFragment extends Fragment implements View.OnClickListener , A
         public void onBtnPreClicked();
         public void onBtnCheckAnswerClicked();
         public void onItemSelected(int position, long id);
+        public void onRdBtnChanged(int checkedId);
     }
 
     // reference activity
@@ -60,21 +67,50 @@ public class IdiomsFragment extends Fragment implements View.OnClickListener , A
         Button btnPre = (Button)view.findViewById(R.id.btnPre);
         mQuestionTextView = (TextView)view.findViewById(R.id.tvQuestion);
         mAnswerTextView = (TextView)view.findViewById(R.id.tvAnswer);
-
-        Spinner spinner = (Spinner) view.findViewById(R.id.spinner);
+        rdGroup = (RadioGroup)view.findViewById(R.id.rdLevelGroup);
+        //RadioButton rdbtn= (RadioButton)view.findViewById(R.id.rdDreamer);
+        mSpinnerDays = (Spinner) view.findViewById(R.id.spinner);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(), R.array.day, android.R.layout.simple_spinner_item);
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
+        mSpinnerDays.setAdapter(adapter);
 
         // button click listener
         btnNext.setOnClickListener(this);
         btnAnswer.setOnClickListener(this);
         btnPre.setOnClickListener(this);
+        rdGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                // checkedId is the RadioButton selected
+                switch (checkedId){
+                    case R.id.rdDreamer:
+                        mSpinnerDays.setSelection(0);
+                        setAnswerBlank();
+                        mListener.onRdBtnChanged(1);
+                        break;
+                    case R.id.rdImaginerA:
+                        mSpinnerDays.setSelection(0);
+                        setAnswerBlank();
+                        mListener.onRdBtnChanged(2);
+                        break;
+//                    case R.id.rdImaginerB:
+//                        mSpinnerDays.setSelection(0);
+//                        setAnswerBlank();
+//                        mListener.onRdBtnChanged(3);
+//                        break;
+//                    case R.id.rdImaginerC:
+//                        mSpinnerDays.setSelection(0);
+//                        setAnswerBlank();
+//                        mListener.onRdBtnChanged(4);
+//                        break;
+                }
 
-
-        spinner.setOnItemSelectedListener(this);
+            }
+        });
+        mSpinnerDays.setOnItemSelectedListener(this);
         mView=view;
         return view;
 
@@ -113,10 +149,26 @@ public class IdiomsFragment extends Fragment implements View.OnClickListener , A
                 mListener.onBtnCheckAnswerClicked();
             }
                 break;
-
             default:
                 break;
         }
+    }
+    public void setRadioButtonClicked(View view){
+        switch(view.getId()){
+            case R.id.rdDreamer:
+                Log.e("test","dream");
+                break;
+            case R.id.rdImaginerA:
+                Log.e("test","ia");
+                break;
+//            case R.id.rdImaginerB:
+//                Log.e("test","ib");
+//                break;
+//            case R.id.rdImaginerC:
+//                Log.e("test","ic");
+//                break;
+        }
+
     }
 
     private void setAnswerBlank(){
