@@ -1,8 +1,15 @@
 package jewoo.idioms;
 
+
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+import android.support.design.widget.TabLayout;
+
+import android.support.v4.view.ViewPager;
+import android.app.FragmentManager;
+//import android.support.v4.app.FragmentManager;
+
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -10,10 +17,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TabHost;
 
 import java.util.ArrayList;
-
-import android.app.FragmentManager;
 
 
 public class MainActivity extends AppCompatActivity implements IdiomsFragment.OnListener {
@@ -42,8 +48,8 @@ public class MainActivity extends AppCompatActivity implements IdiomsFragment.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
 
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
@@ -54,6 +60,19 @@ public class MainActivity extends AppCompatActivity implements IdiomsFragment.On
 //            }
 //        });
 
+        TabHost host = (TabHost)findViewById(R.id.tabHost);
+        host.setup();
+        //Tab 1
+        TabHost.TabSpec spec = host.newTabSpec("Idioms");
+        spec.setContent(R.id.tabIdioms);
+        spec.setIndicator("Idioms");
+        host.addTab(spec);
+
+        //Tab 2
+        spec = host.newTabSpec("Patterns");
+        spec.setContent(R.id.tabPatterns);
+        spec.setIndicator("Patterns");
+        host.addTab(spec);
 
         mListIdoms = new ArrayList<IdiomsData>();
         // set sqlite ..
@@ -98,7 +117,6 @@ public class MainActivity extends AppCompatActivity implements IdiomsFragment.On
 
 
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
