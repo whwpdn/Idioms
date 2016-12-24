@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.widget.TabHost;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity implements IdiomsFragment.OnListener {
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements IdiomsFragment.On
 
     // Selected Day
     private ArrayList<IdiomsData> mListIdoms;
+    private ArrayList<PatternsData> mListPatterns;
     private boolean mSelectedMode = false;
     private int mSelectedId =0;
 
@@ -75,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements IdiomsFragment.On
         host.addTab(spec);
 
         mListIdoms = new ArrayList<IdiomsData>();
+
         // set sqlite ..
         mDBHelper = new IdiomsSqliteOpenHelper(
                 this,mDBName,null // cursorFactory null : standart cursor
@@ -89,33 +92,45 @@ public class MainActivity extends AppCompatActivity implements IdiomsFragment.On
             Log.e(TAG_DB, " can't get database");
             finish();
         }
-//
-//        //copy db file
-//        try {
-//            File outfile = new File("/data/data/com.example.jewoo.idioms/databases/"+mDBName);
-//            AssetManager assetManager = getResources().getAssets();
-//            InputStream is = assetManager.open("databases/StudyDatabase.db",AssetManager.ACCESS_BUFFER);
-//            long fileSize = is.available();
-//            long test = outfile.length();
-//            //if(fileSize > test) {
-//                byte[] tempData = new byte[(int) fileSize];
-//                is.read(tempData);
-//                is.close();
-//                outfile.createNewFile();
-//                FileOutputStream fo = new FileOutputStream(outfile);
-//                fo.write(tempData);
-//                fo.close();
-//            //}
-//        }
-//        catch (IOException e) {
-//            e.printStackTrace();
-//        }
 
-        // set first question - randomly one in total
-        //mCurrentId = getQuestion(mCurrentId);
         mQuestionTotalCnt = getTotalCnt();
 
+        setPatternsData();
+    }
+    public void setPatternsData(){
+        mListPatterns = new ArrayList<PatternsData>();
 
+        mListPatterns.clear();
+
+        Cursor cursor = mDB.rawQuery("select pa.pattern, pa.meaning, ppa.meaning, ppa.english, ppa.hint from patterns pa , patterns_practice ppa WHERE ppa._id = 1",null);
+
+        int iId;
+        String strPattern="";
+        String strMeaning="";
+        List<String> listPractices = new ArrayList<String>();
+        List<String> listAnswer=new ArrayList<String>();
+        List<String> listHint=new ArrayList<String>();
+
+        if ( cursor.moveToNext()){
+            strPattern = cursor.getString(0);
+            strMeaning= cursor.getString(1);
+            listPractices.add(cursor.getString(2));
+            listAnswer.add(cursor.getString(3));
+            listHint.add(cursor.getString(4));
+        }
+
+        while(cursor.moveToNext()){
+
+            listPractices.add(cursor.getString(2));
+            listAnswer.add(cursor.getString(3));
+            listHint.add(cursor.getString(4));
+
+        }
+        if (! strPattern.isEmpty()) {
+            PatternsData patterns = new PatternsData(strPattern,strMeaning, listPractices, listAnswer, listHint);
+            mListPatterns.add(patterns);
+            setPPData(patterns);
+        }
     }
 
     @Override
@@ -174,6 +189,13 @@ public class MainActivity extends AppCompatActivity implements IdiomsFragment.On
         fmIdoms.setQuestionText(strQuestion);
 
     }
+    private void setPPData(PatternsData aData){
+        //mQuestionTextView.setText(strQuestion);
+        FragmentManager fmManager = getFragmentManager();
+        PatternsFragment fmPatternss=(PatternsFragment)fmManager.findFragmentById(R.id.fragment2);
+
+        fmPatternss.setPatternsData(aData);
+    }
 
     private void showCorrectAnswer()
     {
@@ -211,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements IdiomsFragment.On
     // IdiomsFragment interface 구현
     public void onBtnNextClicked() {
         if (mSelectedMode) {
-            if(mSelectedId == 2)
+            if(mSelectedId == 2) // 3 question a day ,
                  mSelectedId = setSelectedDayQuestion(0);
             else
                 mSelectedId = setSelectedDayQuestion(mSelectedId+1);

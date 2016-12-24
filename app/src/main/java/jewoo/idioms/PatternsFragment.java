@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -24,8 +25,12 @@ public class PatternsFragment extends Fragment {
     public BaseExpandableAdapter mCustomExpListViewAdapter; // 위 ExpandableListView를 받을 CustomAdapter(2번 class에 해당)를 선언
 
     private ArrayList<String> mGroupList = null;
-    private ArrayList<ArrayList<String>> mChildList = null;
-    private ArrayList<String> mChildListContent = null;
+    //private ArrayList<ArrayList<String>> mChildList = null;
+    private ArrayList<String> mChildList = null;
+    //private ArrayList<String> mChildListContent = null;
+    private String mChildListContent = null;
+    private TextView mtvPattern = null;
+    private TextView mtvMeaning = null;
     Context c;
     View v ;
     @Override
@@ -37,33 +42,57 @@ public class PatternsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
         v= inflater.inflate( R.layout.patterns_fragment, container, false );
 
+        mtvPattern = (TextView)v.findViewById(R.id.tvPattern);
+        mtvMeaning = (TextView)v.findViewById(R.id.tvMeaning);
+        mGroupList = new ArrayList<String>();
+        //mChildList = new ArrayList<ArrayList<String>>();
+        mChildList = new ArrayList<String>();
+        //mChildListContent = new ArrayList<String>();
         return v;
 
     }
 
 
 
+    public void setPatternsData(PatternsData aPattern){
+
+        mtvPattern.setText(aPattern.getmPattern());
+        mtvMeaning.setText(aPattern.getmMeaning());
+        List<String> listPractices = aPattern.getmQuestion();
+        List<String> listAnswers = aPattern.getmAnswer();
+
+        for(int i =0 ; i <listPractices.size() ; i++) {
+            mGroupList.add(listPractices.get(i));
+            mChildListContent = listAnswers.get(i);
+            mChildList.add(mChildListContent);
+
+        }
+
+    }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
 
         super.onActivityCreated(savedInstanceState);
-        mGroupList = new ArrayList<String>();
-        mChildList = new ArrayList<ArrayList<String>>();
-        mChildListContent = new ArrayList<String>();
+        //mGroupList = new ArrayList<String>();
+
 
         expandableListView = (ExpandableListView)v.findViewById(R.id.elistPatterns);
-        mGroupList.add("가위");
-        mGroupList.add("바위");
-        mGroupList.add("보");
+//        mGroupList.add("가위");
+//        mGroupList.add("바위");
+//        mGroupList.add("보");
+//
+//        mChildListContent.add("1");
+//        mChildListContent.add("2");
+//        mChildListContent.add("3");
 
-        mChildListContent.add("1");
-        mChildListContent.add("2");
-        mChildListContent.add("3");
+       // mChildList.add(mChildListContent);
+       // mChildList.add(mChildListContent);
+        //mChildList.add(mChildListContent);
 
-        mChildList.add(mChildListContent);
-        mChildList.add(mChildListContent);
-        mChildList.add(mChildListContent);
+        // initialize patterns data
+
 
         //here setting all the values to Parent and child classes
         c=getActivity();
@@ -115,13 +144,13 @@ public class PatternsFragment extends Fragment {
     private class BaseExpandableAdapter extends BaseExpandableListAdapter{
 
         private ArrayList<String> groupList = null;
-        private ArrayList<ArrayList<String>> childList = null;
+        private ArrayList<String> childList = null;
         private LayoutInflater inflater = null;
         private ViewHolder viewHolder = null;
 
 
         public BaseExpandableAdapter(Context c, ArrayList<String> groupList,
-                                     ArrayList<ArrayList<String>> childList){
+                                     ArrayList<String> childList){
             super();
             this.inflater = LayoutInflater.from(c);
             this.groupList = groupList;
@@ -178,13 +207,15 @@ public class PatternsFragment extends Fragment {
         // 차일드뷰를 반환한다.
         @Override
         public String getChild(int groupPosition, int childPosition) {
-            return childList.get(groupPosition).get(childPosition);
+            //return childList.get(groupPosition).get(childPosition);
+            return childList.get(groupPosition);
         }
 
         // 차일드뷰 사이즈를 반환한다.
         @Override
         public int getChildrenCount(int groupPosition) {
-            return childList.get(groupPosition).size();
+            //return childList.get(groupPosition).size();
+            return 1;
         }
 
         // 차일드뷰 ID를 반환한다.
