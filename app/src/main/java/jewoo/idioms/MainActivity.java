@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity implements IdiomsFragment.OnListener {
+public class MainActivity extends AppCompatActivity implements IdiomsFragment.OnListener, PatternsFragment.OnListener {
 
     // sqlite database member
     private IdiomsSqliteOpenHelper mDBHelper;
@@ -37,9 +37,10 @@ public class MainActivity extends AppCompatActivity implements IdiomsFragment.On
     private String mCorrectAnswer="";
     private int mQuestionTotalCnt =0;
 
-    // Selected Day
+
     private ArrayList<IdiomsData> mListIdoms;
     private ArrayList<PatternsData> mListPatterns;
+    // Selected Day
     private boolean mSelectedMode = false;
     private int mSelectedId =0;
 
@@ -94,15 +95,14 @@ public class MainActivity extends AppCompatActivity implements IdiomsFragment.On
         }
 
         mQuestionTotalCnt = getTotalCnt();
-
-        setPatternsData();
-    }
-    public void setPatternsData(){
         mListPatterns = new ArrayList<PatternsData>();
-
+        setPatternsData(0);
+    }
+    public void setPatternsData(int day){
         mListPatterns.clear();
 
-        Cursor cursor = mDB.rawQuery("select pa.pattern, pa.meaning, ppa.meaning, ppa.english, ppa.hint from patterns pa , patterns_practice ppa WHERE ppa._id = 1",null);
+        //Cursor cursor = mDB.rawQuery("select pa.pattern, pa.meaning, ppa.meaning, ppa.english, ppa.hint from patterns pa , patterns_practice ppa WHERE ppa._id = 1",null);
+        Cursor cursor = mDB.rawQuery("select ppa.meaning, ppa.english, ppa.hint from patterns_practice ppa WHERE ppa._id = "+(++day),null);
 
         int iId;
         String strPattern="";
@@ -111,25 +111,37 @@ public class MainActivity extends AppCompatActivity implements IdiomsFragment.On
         List<String> listAnswer=new ArrayList<String>();
         List<String> listHint=new ArrayList<String>();
 
-        if ( cursor.moveToNext()){
-            strPattern = cursor.getString(0);
-            strMeaning= cursor.getString(1);
-            listPractices.add(cursor.getString(2));
-            listAnswer.add(cursor.getString(3));
-            listHint.add(cursor.getString(4));
-        }
+//        if ( cursor.moveToNext()){
+//           // strPattern = cursor.getString(0);
+//           // strMeaning= cursor.getString(1);
+////            listPractices.add(cursor.getString(2));
+////            listAnswer.add(cursor.getString(3));
+////            listHint.add(cursor.getString(4));
+//            listPractices.add(cursor.getString(0));
+//            listAnswer.add(cursor.getString(1));
+//            listHint.add(cursor.getString(2));
+//        }
 
         while(cursor.moveToNext()){
 
-            listPractices.add(cursor.getString(2));
-            listAnswer.add(cursor.getString(3));
-            listHint.add(cursor.getString(4));
+            listPractices.add(cursor.getString(0));
+            listAnswer.add(cursor.getString(1));
+            listHint.add(cursor.getString(2));
 
+        }
+
+        cursor = mDB.rawQuery("select pa.pattern, pa.meaning from patterns pa WHERE pa._id = "+(day),null);
+        if( cursor.moveToNext()){
+            strPattern = cursor.getString(0);
+            strMeaning = cursor.getString(1);
         }
         if (! strPattern.isEmpty()) {
             PatternsData patterns = new PatternsData(strPattern,strMeaning, listPractices, listAnswer, listHint);
             mListPatterns.add(patterns);
             setPPData(patterns);
+        }
+        else{
+            // error
         }
     }
 
@@ -279,6 +291,13 @@ public class MainActivity extends AppCompatActivity implements IdiomsFragment.On
             int[] days = {pos};
             setSelectedDayIdoms(days);
         }
+    }
+
+    // Patterns Fragment Interface
+    public void onPatternDayItemSelected(int pos, long id){
+
+        setPatternsData(pos);
+
 
     }
 

@@ -1,15 +1,20 @@
 package jewoo.idioms;
 
 //import android.support.v4.app.Fragment;
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -19,7 +24,7 @@ import java.util.List;
 /**
  * Created by jewoo on 2016. 7. 31..
  */
-public class PatternsFragment extends Fragment {
+public class PatternsFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 
     public ExpandableListView expandableListView; // ExpandableListView 변수 선언
     public BaseExpandableAdapter mCustomExpListViewAdapter; // 위 ExpandableListView를 받을 CustomAdapter(2번 class에 해당)를 선언
@@ -31,8 +36,21 @@ public class PatternsFragment extends Fragment {
     private String mChildListContent = null;
     private TextView mtvPattern = null;
     private TextView mtvMeaning = null;
+    private Spinner mSpinnerDays;
     Context c;
     View v ;
+    OnListener mListener;
+
+    @Override
+    public void onAttach(Activity activity){
+        super.onAttach(activity);
+        try{
+            mListener = (OnListener) activity;
+        } catch(ClassCastException e){
+            throw new ClassCastException(activity.toString() + " must implement OnArticleSelectedListener");
+        }
+
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,18 +61,30 @@ public class PatternsFragment extends Fragment {
         v= inflater.inflate( R.layout.patterns_fragment, container, false );
 
         mtvPattern = (TextView)v.findViewById(R.id.tvPattern);
+
         mtvMeaning = (TextView)v.findViewById(R.id.tvMeaning);
         mGroupList = new ArrayList<String>();
         //mChildList = new ArrayList<ArrayList<String>>();
         mChildList = new ArrayList<String>();
+
+
+        mSpinnerDays = (Spinner) v.findViewById(R.id.spinner2);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(), R.array.patterns_day, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mSpinnerDays.setAdapter(adapter);
+        mSpinnerDays.setOnItemSelectedListener(this);
         //mChildListContent = new ArrayList<String>();
         return v;
 
     }
 
 
-
     public void setPatternsData(PatternsData aPattern){
+
+        mChildList.clear();
+        mGroupList.clear();
+        if(mCustomExpListViewAdapter !=null)
+            mCustomExpListViewAdapter.notifyDataSetChanged();
 
         mtvPattern.setText(aPattern.getmPattern());
         mtvMeaning.setText(aPattern.getmMeaning());
@@ -68,6 +98,7 @@ public class PatternsFragment extends Fragment {
 
         }
 
+
     }
 
     @Override
@@ -77,22 +108,7 @@ public class PatternsFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         //mGroupList = new ArrayList<String>();
 
-
         expandableListView = (ExpandableListView)v.findViewById(R.id.elistPatterns);
-//        mGroupList.add("가위");
-//        mGroupList.add("바위");
-//        mGroupList.add("보");
-//
-//        mChildListContent.add("1");
-//        mChildListContent.add("2");
-//        mChildListContent.add("3");
-
-       // mChildList.add(mChildListContent);
-       // mChildList.add(mChildListContent);
-        //mChildList.add(mChildListContent);
-
-        // initialize patterns data
-
 
         //here setting all the values to Parent and child classes
         c=getActivity();
@@ -141,6 +157,23 @@ public class PatternsFragment extends Fragment {
 
     }
 
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        mListener.onPatternDayItemSelected(position,id);
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
+
+    // button event listener
+    public interface OnListener{
+
+        public void onPatternDayItemSelected(int position, long id);
+
+    }
+
     private class BaseExpandableAdapter extends BaseExpandableListAdapter{
 
         private ArrayList<String> groupList = null;
@@ -184,7 +217,7 @@ public class PatternsFragment extends Fragment {
 
             if(v == null){
                 viewHolder = new ViewHolder();
-                v = inflater.inflate(R.layout.list_row, parent , false);
+                v = inflater.inflate(R.layout.list_group, parent , false);
                 viewHolder.tv_groupName = (TextView) v.findViewById(R.id.tvparent);
                 v.setTag(viewHolder);
 

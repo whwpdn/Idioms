@@ -70,6 +70,7 @@ public class IdiomsFragment extends Fragment implements View.OnClickListener , A
         //RadioButton rdbtn= (RadioButton)view.findViewById(R.id.rdDreamer);
         mSpinnerDays = (Spinner) view.findViewById(R.id.spinner);
 
+        // setting spinner value from R.array.day ( 1~20)
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(), R.array.day, android.R.layout.simple_spinner_item);
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
