@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <TextView
         android:layout_width="match_parent"
@@ -10,7 +10,7 @@
         android:text="Large Text"
         android:id="@+id/tvPattern"
         android:layout_gravity="center_horizontal"
-        android:textColor="#ff0099"/>
+        android:textColor="#ff0099" />
 
     <TextView
         android:layout_width="match_parent"
@@ -19,22 +19,20 @@
         android:text="Large Text"
         android:id="@+id/tvMeaning"
         android:layout_gravity="center_horizontal"
-        android:textColor="#ff9900"/>
-
+        android:textColor="#ff9900" />
     <ExpandableListView
-        android:layout_width="wrap_content"
-        android:layout_height="384dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:id="@+id/elistPatterns"
-        android:layout_gravity="left|center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="1" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:weightSum="1">
-
+        android:layout_height="wrap_content">
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/day"
             android:id="@+id/textView"
@@ -43,9 +41,10 @@
 
         <Spinner
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/spinner2"
             android:layout_weight="0.5" />
     </LinearLayout>
+<!--android:weightSum="1">-->
 
 </LinearLayout>
