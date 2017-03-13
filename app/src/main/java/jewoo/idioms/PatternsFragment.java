@@ -111,7 +111,7 @@ public class PatternsFragment extends Fragment implements AdapterView.OnItemSele
         expandableListView = (ExpandableListView)v.findViewById(R.id.elistPatterns);
 
         //here setting all the values to Parent and child classes
-        c=getActivity();
+        //c=getActivity();
 
 
         mCustomExpListViewAdapter = new BaseExpandableAdapter(getActivity(), mGroupList, mChildList);
