@@ -48,7 +48,21 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/tabPatterns"
+                android:id="@+id/tabPatterns"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <fragment
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:name="jewoo.idioms.PatternsFragment"
+                    android:id="@+id/fragment2"
+                    tools:layout="@layout/patterns_fragment" />
+            </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/tabListening"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical">
@@ -56,9 +70,9 @@
                     <fragment
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:name="jewoo.idioms.PatternsFragment"
-                        android:id="@+id/fragment2"
-                        tools:layout="@layout/patterns_fragment" />
+                        android:name="jewoo.idioms.ListeningFragment"
+                        android:id="@+id/fragment3"
+                        tools:layout="@layout/listening_fragment" />
                 </LinearLayout>
 
             </FrameLayout>
