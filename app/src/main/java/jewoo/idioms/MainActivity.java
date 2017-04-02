@@ -40,13 +40,16 @@ public class MainActivity extends AppCompatActivity implements IdiomsFragment.On
     int miDBVersion =1; // database version
     private static final String TAG_DB = "SQLITE";
 
-    //question member
+    //
+    private static final String SAMPLE_PATH = "Samples";
+
+    //idioms question member
     private int mCurrentId=1;
     private String mCorrectAnswer="";
     private int mQuestionTotalCnt =0;
-
-
     private ArrayList<IdiomsData> mListIdoms;
+
+    // patterns
     private ArrayList<PatternsData> mListPatterns;
     // Selected Day
     private boolean mSelectedMode = false;
@@ -60,17 +63,7 @@ public class MainActivity extends AppCompatActivity implements IdiomsFragment.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
 
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
 
         checkFirstRun();
         TabHost host = (TabHost)findViewById(R.id.tabHost);
@@ -113,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements IdiomsFragment.On
         mQuestionTotalCnt = getTotalCnt();
         mListPatterns = new ArrayList<PatternsData>();
         setPatternsData(0);
+        initListeningData();
     }
     public void setPatternsData(int day){
         mListPatterns.clear();
@@ -126,17 +120,6 @@ public class MainActivity extends AppCompatActivity implements IdiomsFragment.On
         List<String> listPractices = new ArrayList<String>();
         List<String> listAnswer=new ArrayList<String>();
         List<String> listHint=new ArrayList<String>();
-
-//        if ( cursor.moveToNext()){
-//           // strPattern = cursor.getString(0);
-//           // strMeaning= cursor.getString(1);
-////            listPractices.add(cursor.getString(2));
-////            listAnswer.add(cursor.getString(3));
-////            listHint.add(cursor.getString(4));
-//            listPractices.add(cursor.getString(0));
-//            listAnswer.add(cursor.getString(1));
-//            listHint.add(cursor.getString(2));
-//        }
 
         while(cursor.moveToNext()){
 
@@ -223,6 +206,13 @@ public class MainActivity extends AppCompatActivity implements IdiomsFragment.On
         PatternsFragment fmPatternss=(PatternsFragment)fmManager.findFragmentById(R.id.fragment2);
 
         fmPatternss.setPatternsData(aData);
+    }
+
+    private void initListeningData(){
+        FragmentManager fmManager = getFragmentManager();
+        ListeningFragment fmListening=(ListeningFragment)fmManager.findFragmentById(R.id.fragment3);
+
+        fmListening.initFileList();
     }
 
     private void showCorrectAnswer()
@@ -313,8 +303,6 @@ public class MainActivity extends AppCompatActivity implements IdiomsFragment.On
     public void onPatternDayItemSelected(int pos, long id){
 
         setPatternsData(pos);
-
-
     }
 
     @Override
@@ -332,13 +320,14 @@ public class MainActivity extends AppCompatActivity implements IdiomsFragment.On
         mListIdoms.clear();
     }
 
+    // copy sample files
     private void CopyAssets() {
         AssetManager assetManager = getResources().getAssets();//getAssets();
 
         String[] files = null;
         String mkdir = null ;
         try {
-            files = assetManager.list("Samples");
+            files = assetManager.list(SAMPLE_PATH);
 
             //이미지만 가져올때 files = assetManager.list("image");
 
@@ -349,13 +338,13 @@ public class MainActivity extends AppCompatActivity implements IdiomsFragment.On
             InputStream in = null;
             OutputStream out = null;
             try {
-                in = assetManager.open("Samples/"+files[i]);
+                in = assetManager.open(SAMPLE_PATH+"/"+files[i]);
                 //in = assetManager.open(files[i]);
 
                 //폴더생성
                 String str = Environment.getExternalStorageState();
                 if ( str.equals(Environment.MEDIA_MOUNTED)) {
-                    mkdir = getExternalFilesDir(null).getAbsolutePath()+"/Samples/";
+                    mkdir = getExternalFilesDir(null).getAbsolutePath()+"/"+SAMPLE_PATH+"/";
                     //mkdir = "/sdcard/elecgal/templet/" ;
                 } else {
                     Environment.getExternalStorageDirectory();
@@ -396,6 +385,7 @@ public class MainActivity extends AppCompatActivity implements IdiomsFragment.On
         }
     }
 
+    // copy file method
     private void copyFile(InputStream in, OutputStream out) throws IOException {
         byte[] buffer = new byte[1024];
         int read;
@@ -405,6 +395,7 @@ public class MainActivity extends AppCompatActivity implements IdiomsFragment.On
 
     }
 
+    //
     private void checkFirstRun() {
 
         final String PREFS_NAME = "installed";
