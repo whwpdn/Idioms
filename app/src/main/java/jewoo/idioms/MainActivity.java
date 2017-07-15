@@ -92,12 +92,13 @@ public class MainActivity extends AppCompatActivity implements IdiomsFragment.On
         mListIdoms = new ArrayList<IdiomsData>();
 
         // set sqlite ..
-        mDBHelper = new IdiomsSqliteOpenHelper(
-                this,mDBName,null // cursorFactory null : standart cursor
-                , miDBVersion) ;
+//        mDBHelper = new IdiomsSqliteOpenHelper(
+//                this,mDBName,null // cursorFactory null : standart cursor
+//                , miDBVersion) ;
 
         try{
-            mDB = mDBHelper.getWritableDatabase();
+//            mDB = mDBHelper.getWritableDatabase();
+            mDB = IdiomsSqliteOpenHelper.getInstance(this, mDBName, null, miDBVersion);
             //getReadableDatabase() // only read
 
         } catch(SQLiteException e){
@@ -116,6 +117,7 @@ public class MainActivity extends AppCompatActivity implements IdiomsFragment.On
 
         //Cursor cursor = mDB.rawQuery("select pa.pattern, pa.meaning, ppa.meaning, ppa.english, ppa.hint from patterns pa , patterns_practice ppa WHERE ppa._id = 1",null);
         Cursor cursor = mDB.rawQuery("select ppa.meaning, ppa.english, ppa.hint from patterns_practice ppa WHERE ppa._id = "+(++day),null);
+
 
         int iId;
         String strPattern="";
