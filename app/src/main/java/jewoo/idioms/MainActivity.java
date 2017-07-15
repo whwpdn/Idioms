@@ -1,6 +1,8 @@
 package jewoo.idioms;
 
 
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.database.Cursor;
@@ -20,6 +22,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TabHost;
 
 import java.io.File;
@@ -439,4 +442,5 @@ public class MainActivity extends AppCompatActivity implements IdiomsFragment.On
         prefs.edit().putInt(PREF_VERSION_CODE_KEY, currentVersionCode).commit();
 
     }
+
 }

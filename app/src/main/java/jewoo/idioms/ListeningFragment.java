@@ -3,8 +3,11 @@ package jewoo.idioms;
 //import android.support.v4.app.Fragment;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +25,7 @@ import java.util.ArrayList;
 /**
  * Created by jewoo on 2017. 2. 28..
  */
-public class ListeningFragment extends Fragment  {
+public class ListeningFragment extends Fragment implements ActivityCompat.OnRequestPermissionsResultCallback {
 
 
     private ListView mListeningList;
@@ -51,8 +54,10 @@ public class ListeningFragment extends Fragment  {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.e("test","testset");
+                ChangeVideoFragment();
             }
         });
+
         return v;
 
     }
@@ -80,6 +85,33 @@ public class ListeningFragment extends Fragment  {
 
         //here setting all the values to Parent and child classes
 
+
+    }
+    public void ChangeVideoFragment() {
+
+        Fragment fragment = new VideoFragment();
+//
+////        switch( v.getId() ) {
+////            default:
+////            case R.id.button1: {
+////                fragment = new FirstFragment();
+////                break;
+////            }
+////            case R.id.button2: {
+////                fragment = new SecondFragment();
+////                break;
+////            }
+////        }
+//
+//        FragmentManager fragmentManager = getFragmentManager();
+//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//        fragmentTransaction.replace( R.id.fragment4, fragment );
+//        fragmentTransaction.commit();
+//    }
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace( R.id.fragment3, fragment );
+        fragmentTransaction.commit();
 
     }
 
