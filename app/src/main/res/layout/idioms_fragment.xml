@@ -77,21 +77,21 @@
                 android:id="@+id/rdLevelGroup">
 
                 <RadioButton
+                    android:id="@+id/rdLevel1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Dreamer"
-                    android:id="@+id/rdDreamer"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
-                    android:checked="true" />
+                    android:checked="true"
+                    android:text="Level 1" />
 
                 <RadioButton
+                    android:id="@+id/rdLevel2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Imaginer A"
-                    android:id="@+id/rdImaginerA"
                     android:layout_gravity="center_vertical"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:text="Level 2" />
 
             </RadioGroup>
 

@@ -18,19 +18,20 @@ public class IdiomsSqliteOpenHelper extends SQLiteOpenHelper {
 
     private static final String DB_TABLENAME="idioms";
     private static final String DB_NAME = "StudyDatabase.db";
+    private static final int DB_VERSION =1; // database version
     private static final String PACKAGE_DIR = "/data/data/jewoo.idioms/databases/";
 
-    public static SQLiteDatabase getInstance(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
+    public static SQLiteDatabase getInstance(Context context, SQLiteDatabase.CursorFactory factory) {
         if (mDB == null) {
-            IdiomsSqliteOpenHelper helper = new IdiomsSqliteOpenHelper(context, name, factory, version);
+            IdiomsSqliteOpenHelper helper = new IdiomsSqliteOpenHelper(context, factory);
             mDB = helper.getWritableDatabase();
         }
 
         return mDB;
     }
 
-    public IdiomsSqliteOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, name, factory, version);
+    public IdiomsSqliteOpenHelper(Context context ,SQLiteDatabase.CursorFactory factory) {
+        super(context, DB_NAME,factory, DB_VERSION);
         initialize(context);
     }
 

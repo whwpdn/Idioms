@@ -1,10 +1,10 @@
 package jewoo.idioms;
 
 import android.app.Activity;
-//import android.support.v4.app.Fragment;
 import android.app.Fragment;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +14,8 @@ import android.widget.Button;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
+import java.util.ArrayList;
+
 
 /**
  * Created by jewoo on 2016. 7. 2..
@@ -24,31 +26,39 @@ public class IdiomsFragment extends Fragment implements View.OnClickListener , A
     private TextView mAnswerTextView;
     private RadioGroup rdGroup;
     private Spinner mSpinnerDays;
-   // private Button mNextButton;
-    OnListener mListener;
 
     private boolean mIsShow = true;
+
+    //
+    private boolean mSelectedMode = false;
+    private int mSelectedId =0;
+    private int mCurrentId=1;
+    private String mCorrectAnswer="";
+    private int mQuestionTotalCnt =0;
+    private ArrayList<IdiomsData> mListIdoms;
+    private int mCurrentLevelId =1; // default 1
+
 
 
 
     // button event listener
-    public interface OnListener{
-        public void onBtnNextClicked();
-        public void onBtnPreClicked();
-        public void onBtnCheckAnswerClicked();
-        public void onItemSelected(int position, long id);
-        public void onRdBtnChanged(int checkedId);
-    }
+//    public interface OnListener{
+//        //public void onBtnNextClicked();
+//        //public void onBtnPreClicked();
+//        //public void onBtnCheckAnswerClicked();
+//        //public void onItemSelected(int position, long id);
+//        //public void onRdBtnChanged(int checkedId);
+//    }
 
     // reference activity
     @Override
     public void onAttach(Activity activity){
         super.onAttach(activity);
-        try{
-            mListener = (OnListener) activity;
-        } catch(ClassCastException e){
-            throw new ClassCastException(activity.toString() + " must implement OnArticleSelectedListener");
-        }
+//        try{
+//            mListener = (OnListener) activity;
+//        } catch(ClassCastException e){
+//            throw new ClassCastException(activity.toString() + " must implement OnArticleSelectedListener");
+//        }
 
     }
 
@@ -80,31 +90,36 @@ public class IdiomsFragment extends Fragment implements View.OnClickListener , A
         btnNext.setOnClickListener(this);
         btnAnswer.setOnClickListener(this);
         btnPre.setOnClickListener(this);
+
+        mListIdoms = new ArrayList<IdiomsData>();
+
         rdGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
         {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 // checkedId is the RadioButton selected
                 switch (checkedId){
-                    case R.id.rdDreamer:
+                    case R.id.rdLevel1:
                         mSpinnerDays.setSelection(0);
                         setAnswerBlank();
-                        mListener.onRdBtnChanged(1);
+                        onRdBtnChanged(1);
+                        //mListener.onRdBtnChanged(1);
                         break;
-                    case R.id.rdImaginerA:
+                    case R.id.rdLevel2:
                         mSpinnerDays.setSelection(0);
                         setAnswerBlank();
-                        mListener.onRdBtnChanged(2);
+                        onRdBtnChanged(2);
+                        //mListener.onRdBtnChanged(2);
                         break;
 //                    case R.id.rdImaginerB:
 //                        mSpinnerDays.setSelection(0);
 //                        setAnswerBlank();
-//                        mListener.onRdBtnChanged(3);
+//                        onRdBtnChanged(3);
 //                        break;
 //                    case R.id.rdImaginerC:
 //                        mSpinnerDays.setSelection(0);
 //                        setAnswerBlank();
-//                        mListener.onRdBtnChanged(4);
+//                       onRdBtnChanged(4);
 //                        break;
                 }
 
@@ -112,15 +127,17 @@ public class IdiomsFragment extends Fragment implements View.OnClickListener , A
         });
         mSpinnerDays.setOnItemSelectedListener(this);
         mView=view;
+        mQuestionTotalCnt = getTotalCnt();
         return view;
 
     }
 
-    public void setQuestionText(String text){
+    private void setQuestionText(String text){
 
         mQuestionTextView.setText(text);
     }
-    public void setAnswerText(String text) {
+
+    private void setAnswerText(String text) {
         mAnswerTextView.setText(text);
     }
 
@@ -133,43 +150,52 @@ public class IdiomsFragment extends Fragment implements View.OnClickListener , A
             case R.id.btnNext:
             {
                 setAnswerBlank();
-                mListener.onBtnNextClicked(); // call back
+
+                if (mSelectedMode) {
+                    if(mSelectedId == 2) // 3 question a day ,
+                        mSelectedId = setSelectedDayQuestion(0);
+                    else
+                        mSelectedId = setSelectedDayQuestion(mSelectedId+1);
+                }
+                else {
+
+                    if(mCurrentId ==mQuestionTotalCnt)
+                        mCurrentId = getQuestion(1); // when this question is Last , go to First
+                    else
+                        mCurrentId = getQuestion(mCurrentId+1);
+                }
+
             }
                 break;
             case R.id.btnPre:
             {
                 setAnswerBlank();
-                mListener.onBtnPreClicked();
+                if(mSelectedMode) {
+                    if(mSelectedId ==0)
+                        mSelectedId = setSelectedDayQuestion(2);
+                    else
+                        mSelectedId = setSelectedDayQuestion(mSelectedId-1);
+                }
+                else {
+                    if(mCurrentId ==1)
+                        mCurrentId = getQuestion(mQuestionTotalCnt); //  when this question is First , go to Last
+                    else
+                        mCurrentId = getQuestion(mCurrentId-1);
+                }
             }
                 break;
             case R.id.btnCheckAnswer:
             {
                 if (mIsShow) break;
                 mIsShow = true;
-                mListener.onBtnCheckAnswerClicked();
+                setAnswerText(mCorrectAnswer);
             }
                 break;
             default:
                 break;
         }
     }
-    public void setRadioButtonClicked(View view){
-        switch(view.getId()){
-            case R.id.rdDreamer:
-                Log.e("test","dream");
-                break;
-            case R.id.rdImaginerA:
-                Log.e("test","ia");
-                break;
-//            case R.id.rdImaginerB:
-//                Log.e("test","ib");
-//                break;
-//            case R.id.rdImaginerC:
-//                Log.e("test","ic");
-//                break;
-        }
 
-    }
 
     private void setAnswerBlank(){
         mIsShow = false;
@@ -179,7 +205,7 @@ public class IdiomsFragment extends Fragment implements View.OnClickListener , A
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
         setAnswerBlank();
-        mListener.onItemSelected(position, id);
+        onItemSelected(position, id);
 
     }
 
@@ -187,4 +213,101 @@ public class IdiomsFragment extends Fragment implements View.OnClickListener , A
     public void onNothingSelected(AdapterView<?> parent) {
 
     }
+
+    private int setSelectedDayQuestion(int idx){
+        setQuestionText(mListIdoms.get(idx).getmQuestion());
+        mCorrectAnswer = mListIdoms.get(idx).getmAnswer();
+        return idx;
+    }
+
+    private int getQuestion(int _id){
+        //Cursor cursor = mDB.rawQuery("select english, meaning from idioms where _id="+_id+" and level = "+mCurrentLevelId+";",null);
+        // tt : total table, pt : part table
+        SQLiteDatabase db = IdiomsSqliteOpenHelper.getInstance(getActivity().getApplicationContext(), null);
+
+        Cursor cursor = db.rawQuery("select tt.meaning,tt.english "+
+                "from idioms tt, (select a._id, count(*) idx from idioms a, idioms b "+
+                "where a._id >=b._id and b.level = "+mCurrentLevelId+
+                " group by a._id ) pt " +
+                "where tt._id= pt._id and pt.idx ="+_id+";",null);
+
+        while(cursor.moveToNext()){
+            setQuestionText(cursor.getString(0));
+            mCorrectAnswer = cursor.getString(1);
+        }
+        return _id;
+    }
+
+    private void onRdBtnChanged(int checkedId) {
+        mCurrentLevelId = checkedId;
+        mQuestionTotalCnt=getTotalCnt();
+        //mCurrentId=0;
+        mCurrentId=getQuestion(1);
+    }
+
+    private int getTotalCnt(){
+        SQLiteDatabase db = IdiomsSqliteOpenHelper.getInstance(getActivity().getApplicationContext(), null);
+        Cursor cursor = db.rawQuery("SELECT count(_id) FROM idioms where level ="+mCurrentLevelId+" ;",null);
+        int total =0;
+        while( cursor.moveToNext()){
+            total = cursor.getInt(0);
+        }
+        return total;
+    }
+
+//    public void onBtnPreClicked(){
+//        if(mSelectedMode) {
+//            if(mSelectedId ==0)
+//                mSelectedId = setSelectedDayQuestion(2);
+//            else
+//                mSelectedId = setSelectedDayQuestion(mSelectedId-1);
+//        }
+//        else {
+//            if(mCurrentId ==1)
+//                mCurrentId = getQuestion(mQuestionTotalCnt); //  when this question is First , go to Last
+//            else
+//                mCurrentId = getQuestion(mCurrentId-1);
+//
+//        }
+//    }
+    // pos - spinner item pos, id - spinner item id
+    private void onItemSelected(int pos, long id){
+
+        if(pos==0)
+        {
+            reset();
+            mCurrentId = getQuestion(mCurrentId);
+            //return;
+        }
+        else {
+            int[] days = {pos};
+            setSelectedDayIdoms(days);
+        }
+    }
+    private void reset()
+    {
+        mSelectedMode = false;
+        mSelectedId = 0;
+        mListIdoms.clear();
+    }
+    // when lesson selected, add Idoms.
+    private void setSelectedDayIdoms(int days[]){
+        mListIdoms.clear();
+        mSelectedMode = true;
+        mSelectedId = 0;
+        SQLiteDatabase db = IdiomsSqliteOpenHelper.getInstance(getActivity().getApplicationContext(), null);
+        for(int i=0; i<days.length ; i++){
+
+            Cursor cursor = db.rawQuery("select _id, meaning, english from idioms where lesson="+days[i]+" and level = "+mCurrentLevelId+";",null);
+
+            while(cursor.moveToNext()){
+                IdiomsData idoms = new IdiomsData(cursor.getInt(0),cursor.getString(1),cursor.getString(2));
+                mListIdoms.add(idoms);
+            }
+        }
+
+        setQuestionText(mListIdoms.get(mSelectedId).getmQuestion());
+        mCorrectAnswer = mListIdoms.get(mSelectedId).getmAnswer();
+    }
+
 }

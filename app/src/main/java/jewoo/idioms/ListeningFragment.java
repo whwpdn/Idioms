@@ -3,8 +3,6 @@ package jewoo.idioms;
 //import android.support.v4.app.Fragment;
 
 import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,11 +14,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import java.io.File;
-import java.net.URI;
 import java.util.ArrayList;
 
 
@@ -57,17 +51,17 @@ public class ListeningFragment extends Fragment implements ActivityCompat.OnRequ
         mListeningList.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.e("test","click");
+                // call video activity
                 Intent i = new Intent(getActivity(),VideoActivity.class);
-               String filename =  mListAdapter.getItem(position);
+                String filename =  mListAdapter.getItem(position);
                 String path = getActivity().getExternalFilesDir(null).getAbsolutePath()+"/samples/" + filename;
-               i.putExtra("videofileuri",path);
+                i.putExtra("videofileuri",path);
                 startActivity(i);
-
                 //ChangeVideoFragment();
             }
         });
 
+        initFileList();
         return v;
 
     }
@@ -91,38 +85,8 @@ public class ListeningFragment extends Fragment implements ActivityCompat.OnRequ
 
         super.onActivityCreated(savedInstanceState);
         //mGroupList = new ArrayList<String>();
-
-
         //here setting all the values to Parent and child classes
 
-
-    }
-    public void ChangeVideoFragment() {
-
-        Fragment fragment = new VideoFragment();
-//
-////        switch( v.getId() ) {
-////            default:
-////            case R.id.button1: {
-////                fragment = new FirstFragment();
-////                break;
-////            }
-////            case R.id.button2: {
-////                fragment = new SecondFragment();
-////                break;
-////            }
-////        }
-//
-//        FragmentManager fragmentManager = getFragmentManager();
-//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//        fragmentTransaction.replace( R.id.fragment4, fragment );
-//        fragmentTransaction.commit();
-//    }
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        //fragmentTransaction.hide(this);
-        fragmentTransaction.replace( R.id.fragment3, fragment );
-        fragmentTransaction.commit();
 
     }
 

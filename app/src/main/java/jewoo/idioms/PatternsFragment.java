@@ -4,6 +4,8 @@ package jewoo.idioms;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,16 +41,19 @@ public class PatternsFragment extends Fragment implements AdapterView.OnItemSele
     private Spinner mSpinnerDays;
     Context c;
     View v ;
-    OnListener mListener;
+    //OnListener mListener;
+
+    private ArrayList<PatternsData> mListPatterns;
+
 
     @Override
     public void onAttach(Activity activity){
         super.onAttach(activity);
-        try{
-            mListener = (OnListener) activity;
-        } catch(ClassCastException e){
-            throw new ClassCastException(activity.toString() + " must implement OnArticleSelectedListener");
-        }
+//        try{
+//            mListener = (OnListener) activity;
+//        } catch(ClassCastException e){
+//            throw new ClassCastException(activity.toString() + " must implement OnArticleSelectedListener");
+//        }
 
     }
     @Override
@@ -74,6 +79,9 @@ public class PatternsFragment extends Fragment implements AdapterView.OnItemSele
         mSpinnerDays.setAdapter(adapter);
         mSpinnerDays.setOnItemSelectedListener(this);
         //mChildListContent = new ArrayList<String>();
+        mListPatterns = new ArrayList<PatternsData>();
+
+        setPatternsData(0);
         return v;
 
     }
@@ -159,7 +167,8 @@ public class PatternsFragment extends Fragment implements AdapterView.OnItemSele
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        mListener.onPatternDayItemSelected(position,id);
+        setPatternsData(position);
+        //mListener.onPatternDayItemSelected(position,id);
     }
 
     @Override
@@ -168,11 +177,11 @@ public class PatternsFragment extends Fragment implements AdapterView.OnItemSele
     }
 
     // button event listener
-    public interface OnListener{
-
-        public void onPatternDayItemSelected(int position, long id);
-
-    }
+//    public interface OnListener{
+//
+//        public void onPatternDayItemSelected(int position, long id);
+//
+//    }
 
     private class BaseExpandableAdapter extends BaseExpandableListAdapter{
 
@@ -292,4 +301,43 @@ public class PatternsFragment extends Fragment implements AdapterView.OnItemSele
         }
 
     }
+
+    public void setPatternsData(int day){
+        mListPatterns.clear();
+
+        SQLiteDatabase db = IdiomsSqliteOpenHelper.getInstance(getActivity().getApplicationContext(), null);
+        //Cursor cursor = mDB.rawQuery("select pa.pattern, pa.meaning, ppa.meaning, ppa.english, ppa.hint from patterns pa , patterns_practice ppa WHERE ppa._id = 1",null);
+        Cursor cursor = db.rawQuery("select ppa.meaning, ppa.english, ppa.hint from patterns_practice ppa WHERE ppa._id = "+(++day),null);
+
+
+        int iId;
+        String strPattern="";
+        String strMeaning="";
+        List<String> listPractices = new ArrayList<String>();
+        List<String> listAnswer=new ArrayList<String>();
+        List<String> listHint=new ArrayList<String>();
+
+        while(cursor.moveToNext()){
+
+            listPractices.add(cursor.getString(0));
+            listAnswer.add(cursor.getString(1));
+            listHint.add(cursor.getString(2));
+
+        }
+
+        cursor = db.rawQuery("select pa.pattern, pa.meaning from patterns pa WHERE pa._id = "+(day),null);
+        if( cursor.moveToNext()){
+            strPattern = cursor.getString(0);
+            strMeaning = cursor.getString(1);
+        }
+        if (! strPattern.isEmpty()) {
+            PatternsData patterns = new PatternsData(strPattern,strMeaning, listPractices, listAnswer, listHint);
+            mListPatterns.add(patterns);
+            setPatternsData(patterns);
+        }
+        else{
+            // error
+        }
+    }
+
 }
