@@ -10,3 +10,7 @@
 *.apk
 
 *.apk 복사본
+
+.idea/gradle.xml
+
+.idea/inspectionProfiles/Project_Default.xml

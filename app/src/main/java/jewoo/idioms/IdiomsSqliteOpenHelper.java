@@ -38,22 +38,22 @@ public class IdiomsSqliteOpenHelper extends SQLiteOpenHelper {
         File folder = new File(PACKAGE_DIR);
         folder.mkdirs();
 
-        File outfile = new File(PACKAGE_DIR+DB_NAME);
-        if(outfile.length()<=0) {
-            AssetManager assetManager = ctx.getResources().getAssets();
-            try {
-                InputStream is = assetManager.open("databases/"+DB_NAME, AssetManager.ACCESS_BUFFER);
-                long fileSize = is.available();
-                byte[] tempData = new byte[(int) fileSize];
-                is.read(tempData);
-                is.close();
-                outfile.createNewFile();
-                FileOutputStream fo = new FileOutputStream(outfile);
-                fo.write(tempData);
-                fo.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            File outfile = new File(PACKAGE_DIR+DB_NAME);
+            if(outfile.length()<=0) {
+                AssetManager assetManager = ctx.getResources().getAssets();
+                try {
+                    InputStream is = assetManager.open("databases/"+DB_NAME, AssetManager.ACCESS_BUFFER);
+                    long fileSize = is.available();
+                    byte[] tempData = new byte[(int) fileSize];
+                    is.read(tempData);
+                    is.close();
+                    outfile.createNewFile();
+                    FileOutputStream fo = new FileOutputStream(outfile);
+                    fo.write(tempData);
+                    fo.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
         }
 
     }

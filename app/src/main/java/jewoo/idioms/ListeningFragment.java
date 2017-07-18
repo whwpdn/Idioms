@@ -6,6 +6,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
@@ -19,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.net.URI;
 import java.util.ArrayList;
 
 
@@ -50,11 +52,19 @@ public class ListeningFragment extends Fragment implements ActivityCompat.OnRequ
         mListeningList = (ListView)v.findViewById(R.id.listeningList);
         mListeningList.setAdapter(mListAdapter);
 
+
+
         mListeningList.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.e("test","testset");
-                ChangeVideoFragment();
+                Log.e("test","click");
+                Intent i = new Intent(getActivity(),VideoActivity.class);
+               String filename =  mListAdapter.getItem(position);
+                String path = getActivity().getExternalFilesDir(null).getAbsolutePath()+"/samples/" + filename;
+               i.putExtra("videofileuri",path);
+                startActivity(i);
+
+                //ChangeVideoFragment();
             }
         });
 
@@ -110,6 +120,7 @@ public class ListeningFragment extends Fragment implements ActivityCompat.OnRequ
 //    }
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        //fragmentTransaction.hide(this);
         fragmentTransaction.replace( R.id.fragment3, fragment );
         fragmentTransaction.commit();
 
